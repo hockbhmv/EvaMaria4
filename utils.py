@@ -56,8 +56,8 @@ async def get_poster(query, bulk=False, id=False):
         match = pattern.match(query)
         year = None
         if match:
-            title = match.group(1)
-            year = match.group(3)
+            title = match[1]
+            year = match[3]
         else:
             title = query
         movieid = imdb.search_movie(title.lower(), results=10)
@@ -90,7 +90,7 @@ async def get_poster(query, bulk=False, id=False):
     poster = movie.get('full-size cover url')
     plot = movie.get('plot outline')
     if plot and len(plot) > 800:
-        plot = plot[0:800] + "..."
+        plot = plot[:800] + "..."
     return {
         'title': title,
         'year': date,
@@ -152,8 +152,7 @@ def get_file_id(msg: Message):
             "voice",
             "sticker"
         ):
-            obj = getattr(msg, message_type)
-            if obj:
+            if obj := getattr(msg, message_type):
                 setattr(obj, "message_type", message_type)
                 return obj
 
@@ -276,8 +275,7 @@ def parser(text, keyword):
         else:
             note_data += text[prev:to_check]
             prev = match.start(1) - 1
-    else:
-        note_data += text[prev:]
+    note_data += text[prev:]
 
     try:
         return note_data, buttons, alerts
@@ -307,4 +305,4 @@ def humanbytes(size):
     while size > power:
         size /= power
         n += 1
-    return str(round(size, 2)) + " " + Dic_powerN[n] + 'B'
+    return f"{str(round(size, 2))} {Dic_powerN[n]}B"
